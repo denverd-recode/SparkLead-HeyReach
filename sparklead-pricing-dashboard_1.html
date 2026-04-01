@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SparkLead vs HeyReach — Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 40px; }
+  .header .tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .header h1 { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+  .header h1 span { color: #64748b; }
+  .header p { color: #94a3b8; font-size: 15px; }
+
+  /* Selector */
+  .selector {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+  }
+  .selector .label { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .pill {
+    padding: 8px 18px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.03); color: #cbd5e1; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'Space Mono', monospace;
+  }
+  .pill.active {
+    border: 2px solid #3b82f6;
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15));
+    color: #93c5fd;
+  }
+  .input-row { display: flex; align-items: center; gap: 12px; }
+  .input-row span { color: #64748b; font-size: 13px; white-space: nowrap; }
+  .input-row input[type=number] {
+    width: 100px; padding: 8px 14px; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06);
+    color: #e2e8f0; font-size: 16px; font-family: 'Space Mono', monospace; outline: none;
+  }
+  .slider { margin-top: 16px; width: 100%; accent-color: #3b82f6; height: 6px; }
+
+  /* Cards grid */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card {
+    border-radius: 16px; padding: 24px; position: relative; overflow: hidden;
+  }
+  .card-sl {
+    background: linear-gradient(160deg, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0.04) 100%);
+    border: 1px solid rgba(59,130,246,0.25);
+  }
+  .card-hr {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  }
+  .badge {
+    position: absolute; top: 0; right: 0;
+    background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 4px 14px;
+    border-bottom-left-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .card .name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .card .name-sl { color: #93c5fd; }
+  .card .name-hr { color: #f87171; }
+  .card .price { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; margin-bottom: 4px; }
+  .card .price-sl { color: #f8fafc; }
+  .card .price-hr { color: #94a3b8; }
+  .card .sub { font-size: 13px; color: #64748b; }
+
+  /* Savings */
+  .savings {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.06));
+    border: 1px solid rgba(16,185,129,0.3); border-radius: 16px;
+    padding: 20px 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
+  }
+  .savings .sav-label { font-size: 13px; color: #6ee7b7; font-weight: 600; margin-bottom: 4px; }
+  .savings .sav-amount { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #34d399; }
+  .savings .disc-box {
+    background: rgba(16,185,129,0.2); border-radius: 12px; padding: 12px 24px; text-align: center;
+  }
+  .savings .disc-val { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: #34d399; }
+  .savings .disc-lbl { font-size: 11px; color: #6ee7b7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .card .price { font-size: 28px; }
+    .savings { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="tag">Pricing Comparison</div>
+    <h1>SparkLead <span>vs</span> HeyReach</h1>
+    <p>Порівняння вартості пакетів за кількістю LinkedIn профілів</p>
+  </div>
+
+  <div class="selector">
+    <div class="label">Оберіть кількість профілів</div>
+    <div class="pills" id="pills"></div>
+    <div class="input-row">
+      <span>або введіть:</span>
+      <input type="number" id="numInput" min="1" max="500" value="5">
+      <span style="color:#475569">від 1 до 500</span>
+    </div>
+    <input type="range" class="slider" id="slider" min="1" max="150" value="5">
+  </div>
+
+  <div class="cards">
+    <div class="card card-sl">
+      <div class="badge">Наш сервіс</div>
+      <div class="name name-sl">SparkLead</div>
+      <div class="price price-sl mono" id="slPrice">$245.00</div>
+      <div class="sub" id="slPer">$49.00 / профіль</div>
+    </div>
+    <div class="card card-hr">
+      <div class="name name-hr">HeyReach</div>
+      <div class="price price-hr mono" id="hrPrice">$395.00</div>
+      <div class="sub" id="hrPer">$79.00 / профіль</div>
+    </div>
+  </div>
+
+  <div class="savings">
+    <div>
+      <div class="sav-label">Ваша економія зі SparkLead</div>
+      <div class="sav-amount" id="savAmount">$150.00</div>
+    </div>
+    <div class="disc-box">
+      <div class="disc-val" id="discVal">37.9%</div>
+      <div class="disc-lbl">дешевше</div>
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+const DATA=[
+  {p:1,sp:59,st:59,hp:79,ht:79,d:25.32},{p:2,sp:59,st:118,hp:79,ht:158,d:25.32},
+  {p:3,sp:59,st:177,hp:79,ht:237,d:25.32},{p:4,sp:59,st:236,hp:79,ht:316,d:25.32},
+  {p:5,sp:49,st:245,hp:79,ht:395,d:37.97},{p:6,sp:49,st:294,hp:79,ht:474,d:37.97},
+  {p:7,sp:49,st:343,hp:79,ht:553,d:37.97},{p:8,sp:49,st:392,hp:79,ht:632,d:37.97},
+  {p:9,sp:49,st:441,hp:79,ht:711,d:37.97},{p:10,sp:49,st:490,hp:59,ht:590,d:16.95},
+  {p:20,sp:29.97,st:599.33,hp:49.95,ht:999,d:40.01},{p:30,sp:22.48,st:674.25,hp:33.30,ht:999,d:32.51},
+  {p:40,sp:17.98,st:719.20,hp:24.98,ht:999,d:28.01},{p:50,sp:17.98,st:899,hp:19.98,ht:999,d:10.01},
+  {p:60,sp:18.58,st:1114.88,hp:33.32,ht:1999,d:44.23},{p:70,sp:16.44,st:1150.86,hp:28.56,ht:1999,d:42.43},
+  {p:80,sp:14.84,st:1186.84,hp:24.99,ht:1999,d:40.63},{p:90,sp:13.59,st:1222.82,hp:22.21,ht:1999,d:38.83},
+  {p:100,sp:12.59,st:1258.80,hp:19.99,ht:1999,d:37.03},{p:110,sp:11.77,st:1294.78,hp:18.17,ht:1999,d:35.23},
+  {p:120,sp:11.09,st:1330.76,hp:16.66,ht:1999,d:33.43},{p:130,sp:10.51,st:1366.74,hp:15.38,ht:1999,d:31.63},
+  {p:140,sp:10.02,st:1402.72,hp:14.28,ht:1999,d:29.83},{p:150,sp:9.59,st:1438.70,hp:13.33,ht:1999,d:28.03},
+  {p:500,sp:3.60,st:1799,hp:4.00,ht:1999,d:10.01}
+];
+const QUICK=[1,5,10,20,50,100,150,500];
+let selected=5;
+
+const fmt=v=>v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function interp(n){
+  if(n<=0)return null;
+  const ex=DATA.find(d=>d.p===n);
+  if(ex)return ex;
+  if(n>500)return DATA[DATA.length-1];
+  let lo=DATA[0],hi=DATA[DATA.length-1];
+  for(let i=0;i<DATA.length-1;i++){
+    if(DATA[i].p<=n&&DATA[i+1].p>=n){lo=DATA[i];hi=DATA[i+1];break;}
+  }
+  const t=(n-lo.p)/(hi.p-lo.p);
+  const L=(a,b)=>Math.round((a+(b-a)*t)*100)/100;
+  return{p:n,sp:L(lo.sp,hi.sp),st:L(lo.st,hi.st),hp:L(lo.hp,hi.hp),ht:L(lo.ht,hi.ht),d:L(lo.d,hi.d)};
+}
+
+function buildPills(){
+  const el=document.getElementById('pills');
+  el.innerHTML='';
+  QUICK.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='pill mono'+(selected===p?' active':'');
+    b.textContent=p;
+    b.onclick=()=>pick(p);
+    el.appendChild(b);
+  });
+}
+
+
+function update(){
+  const d=interp(selected);
+  if(!d)return;
+  document.getElementById('slPrice').textContent='$'+fmt(d.st);
+  document.getElementById('slPer').textContent='$'+fmt(d.sp)+' / профіль';
+  document.getElementById('hrPrice').textContent='$'+fmt(d.ht);
+  document.getElementById('hrPer').textContent='$'+fmt(d.hp)+' / профіль';
+  document.getElementById('savAmount').textContent='$'+fmt(d.ht-d.st);
+  document.getElementById('discVal').textContent=d.d.toFixed(1)+'%';
+  buildPills();
+}
+
+function pick(n){
+  selected=n;
+  document.getElementById('numInput').value=n;
+  document.getElementById('slider').value=Math.min(n,150);
+  update();
+}
+
+document.getElementById('numInput').addEventListener('input',e=>{
+  const v=parseInt(e.target.value);
+  if(!isNaN(v)&&v>=1&&v<=500){selected=v;document.getElementById('slider').value=Math.min(v,150);update();}
+});
+document.getElementById('slider').addEventListener('input',e=>{
+  selected=Number(e.target.value);
+  document.getElementById('numInput').value=selected;
+  update();
+});
+
+update();
+</script>
+</body>
+</html>
