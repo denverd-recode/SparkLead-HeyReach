@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UnPitch — AI Simulation Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  .header { text-align: center; margin-bottom: 40px; }
+  .header .tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .header h1 { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+  .header p { color: #94a3b8; font-size: 15px; }
+
+  /* Toggle */
+  .toggle-wrap {
+    display: flex; justify-content: center; margin-bottom: 28px; gap: 0;
+  }
+  .toggle-btn {
+    padding: 12px 28px; font-size: 14px; font-weight: 600; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03);
+    color: #94a3b8; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .toggle-btn:first-child { border-radius: 12px 0 0 12px; }
+  .toggle-btn:last-child { border-radius: 0 12px 12px 0; }
+  .toggle-btn.active-standalone {
+    background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.08));
+    border-color: rgba(245,158,11,0.4); color: #fbbf24;
+  }
+  .toggle-btn.active-bundle {
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.08));
+    border-color: rgba(16,185,129,0.4); color: #34d399;
+  }
+
+  /* Mode description */
+  .mode-desc {
+    text-align: center; margin-bottom: 28px; padding: 14px 24px;
+    border-radius: 12px; font-size: 13px; line-height: 1.6;
+  }
+  .mode-desc.standalone {
+    background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); color: #fcd34d;
+  }
+  .mode-desc.bundle {
+    background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); color: #6ee7b7;
+  }
+
+  /* Selector */
+  .selector {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+  }
+  .selector .label { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 0; }
+  .pill {
+    padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.03); color: #cbd5e1; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'Space Mono', monospace;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .pill .pill-sub { font-size: 10px; color: #64748b; font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .pill.active {
+    border: 2px solid #f59e0b;
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.08));
+    color: #fbbf24;
+  }
+  .pill.active .pill-sub { color: #fbbf24; opacity: 0.6; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card { border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
+  .card-pkg {
+    background: linear-gradient(160deg, rgba(245,158,11,0.12) 0%, rgba(245,158,11,0.04) 100%);
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+  .card-sim {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  }
+  .badge {
+    position: absolute; top: 0; right: 0;
+    background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 4px 14px;
+    border-bottom-left-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .card .name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .card .name-pkg { color: #fbbf24; }
+  .card .name-sim { color: #94a3b8; }
+  .card .price { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; margin-bottom: 4px; }
+  .card .price-pkg { color: #f8fafc; }
+  .card .price-sim { color: #94a3b8; }
+  .card .sub { font-size: 13px; color: #64748b; }
+
+  /* Savings */
+  .savings {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.06));
+    border: 1px solid rgba(16,185,129,0.3); border-radius: 16px;
+    padding: 20px 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 16px;
+  }
+  .savings .sav-label { font-size: 13px; color: #6ee7b7; font-weight: 600; margin-bottom: 4px; }
+  .savings .sav-amount { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #34d399; }
+  .savings .disc-box {
+    background: rgba(16,185,129,0.2); border-radius: 12px; padding: 12px 24px; text-align: center;
+  }
+  .savings .disc-val { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: #34d399; }
+  .savings .disc-lbl { font-size: 11px; color: #6ee7b7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Bundle savings (second row) */
+  .bundle-row {
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(139,92,246,0.04));
+    border: 1px solid rgba(139,92,246,0.25); border-radius: 16px;
+    padding: 20px 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 16px;
+  }
+  .bundle-row .sav-label { font-size: 13px; color: #c4b5fd; font-weight: 600; margin-bottom: 4px; }
+  .bundle-row .sav-amount { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #a78bfa; }
+  .bundle-row .disc-box {
+    background: rgba(139,92,246,0.2); border-radius: 12px; padding: 12px 24px; text-align: center;
+  }
+  .bundle-row .disc-val { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; color: #a78bfa; }
+  .bundle-row .disc-lbl { font-size: 11px; color: #c4b5fd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Free trial note */
+  .note {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 16px 24px; font-size: 13px; color: #94a3b8; line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .note strong { color: #fbbf24; }
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .card .price { font-size: 28px; }
+    .savings, .bundle-row { flex-direction: column; align-items: flex-start; }
+    .toggle-btn { padding: 10px 16px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="tag">AI Simulation Pricing</div>
+    <h1 class="mono">UnPitch</h1>
+    <p>AI-powered outreach simulation by SparkLead</p>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="toggle-wrap">
+    <button class="toggle-btn active-standalone" id="btnStandalone" onclick="setMode('standalone')">UnPitch Standalone</button>
+    <button class="toggle-btn" id="btnBundle" onclick="setMode('bundle')">Product + UnPitch Bundle</button>
+  </div>
+
+  <div id="modeDesc" class="mode-desc standalone">
+    Standard UnPitch pricing — purchase simulation packages independently.
+  </div>
+
+  <!-- Package selector -->
+  <div class="selector">
+    <div class="label">Select simulation package</div>
+    <div class="pills" id="pills"></div>
+  </div>
+
+  <!-- Price cards -->
+  <div class="cards">
+    <div class="card card-pkg">
+      <div class="badge" id="cardBadge">Package price</div>
+      <div class="name name-pkg" id="cardName">Package total</div>
+      <div class="price price-pkg mono" id="pkgPrice">$750.00</div>
+      <div class="sub" id="pkgPer">$150.00 / simulation</div>
+    </div>
+    <div class="card card-sim">
+      <div class="name name-sim">Single simulation price</div>
+      <div class="price price-sim mono" id="simPrice">$150.00</div>
+      <div class="sub" id="simPer">if purchased individually</div>
+    </div>
+  </div>
+
+  <!-- Volume savings -->
+  <div class="savings" id="volSavings">
+    <div>
+      <div class="sav-label" id="savLabel">Volume savings vs single price</div>
+      <div class="sav-amount" id="savAmount">$0.00</div>
+    </div>
+    <div class="disc-box">
+      <div class="disc-val" id="discVal">0.0%</div>
+      <div class="disc-lbl">cheaper</div>
+    </div>
+  </div>
+
+  <!-- Bundle savings (only in bundle mode) -->
+  <div class="bundle-row" id="bundleRow" style="display:none;">
+    <div>
+      <div class="sav-label">Additional bundle discount (30% off)</div>
+      <div class="sav-amount" id="bundleSav">$0.00</div>
+    </div>
+    <div class="disc-box">
+      <div class="disc-val" id="bundleDisc">30%</div>
+      <div class="disc-lbl">extra off</div>
+    </div>
+  </div>
+
+  <!-- Note -->
+  <div class="note">
+    <strong>5 free simulations</strong> included for clients with 40+ LinkedIn profiles to evaluate performance before purchase.
+  </div>
+</div>
+
+<script>
+const TIERS = [
+  { sims: 1,  perSim: 150 },
+  { sims: 5,  perSim: 119 },
+  { sims: 10, perSim: 99 },
+  { sims: 30, perSim: 59 },
+  { sims: 50, perSim: 39 },
+];
+
+const SINGLE_PRICE = 150;
+const BUNDLE_DISCOUNT = 0.30;
+
+let mode = 'standalone';
+let selected = 5;
+
+const fmt = v => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function setMode(m) {
+  mode = m;
+  const btnS = document.getElementById('btnStandalone');
+  const btnB = document.getElementById('btnBundle');
+  const desc = document.getElementById('modeDesc');
+
+  btnS.className = 'toggle-btn' + (m === 'standalone' ? ' active-standalone' : '');
+  btnB.className = 'toggle-btn' + (m === 'bundle' ? ' active-bundle' : '');
+
+  if (m === 'standalone') {
+    desc.className = 'mode-desc standalone';
+    desc.textContent = 'Standard UnPitch pricing — purchase simulation packages independently.';
+  } else {
+    desc.className = 'mode-desc bundle';
+    desc.textContent = 'Bundle with any SparkLead product or service — get 30% off any UnPitch package.';
+  }
+  update();
+}
+
+function buildPills() {
+  const el = document.getElementById('pills');
+  el.innerHTML = '';
+  TIERS.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (selected === t.sims ? ' active' : '');
+    const label = t.sims === 1 ? '1 sim' : t.sims + ' sims';
+    b.innerHTML = '<span>' + label + '</span><span class="pill-sub">$' + t.perSim + '/each</span>';
+    b.onclick = () => { selected = t.sims; update(); };
+    el.appendChild(b);
+  });
+}
+
+function update() {
+  const tier = TIERS.find(t => t.sims === selected);
+  if (!tier) return;
+
+  const basePkg = tier.sims * tier.perSim;
+  const singleTotal = tier.sims * SINGLE_PRICE;
+  const volSaving = singleTotal - basePkg;
+  const volPct = tier.sims === 1 ? 0 : ((volSaving / singleTotal) * 100);
+
+  const isBundle = mode === 'bundle';
+  const finalPkg = isBundle ? basePkg * (1 - BUNDLE_DISCOUNT) : basePkg;
+  const finalPerSim = finalPkg / tier.sims;
+
+  // Cards
+  document.getElementById('cardBadge').textContent = isBundle ? 'Bundle price' : 'Package price';
+  document.getElementById('cardName').textContent = isBundle ? 'Bundle total (−30%)' : 'Package total';
+  document.getElementById('pkgPrice').textContent = '$' + fmt(finalPkg);
+  document.getElementById('pkgPer').textContent = '$' + fmt(finalPerSim) + ' / simulation';
+
+  document.getElementById('simPrice').textContent = '$' + SINGLE_PRICE + '.00';
+  document.getElementById('simPer').textContent = 'single simulation price';
+
+  // Volume savings
+  const totalSaving = singleTotal - finalPkg;
+  const totalPct = tier.sims === 1 && !isBundle ? 0 : ((totalSaving / singleTotal) * 100);
+
+  document.getElementById('savLabel').textContent = isBundle
+    ? 'Total savings vs single price'
+    : 'Volume savings vs single price';
+  document.getElementById('savAmount').textContent = '$' + fmt(totalSaving);
+  document.getElementById('discVal').textContent = totalPct.toFixed(1) + '%';
+
+  // Bundle row
+  const bundleRow = document.getElementById('bundleRow');
+  if (isBundle) {
+    bundleRow.style.display = 'flex';
+    const bundleExtra = basePkg * BUNDLE_DISCOUNT;
+    document.getElementById('bundleSav').textContent = '$' + fmt(bundleExtra);
+  } else {
+    bundleRow.style.display = 'none';
+  }
+
+  buildPills();
+}
+
+update();
+</script>
+</body>
+</html>
