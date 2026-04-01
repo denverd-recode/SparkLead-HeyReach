@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,42 +110,42 @@
   <div class="header">
     <div class="tag">Pricing Comparison</div>
     <h1>SparkLead <span>vs</span> HeyReach</h1>
-    <p>Порівняння вартості пакетів за кількістю LinkedIn профілів</p>
+    <p>Package pricing comparison by number of LinkedIn profiles</p>
   </div>
 
   <div class="selector">
-    <div class="label">Оберіть кількість профілів</div>
+    <div class="label">Select number of profiles</div>
     <div class="pills" id="pills"></div>
     <div class="input-row">
-      <span>або введіть:</span>
+      <span>or enter:</span>
       <input type="number" id="numInput" min="1" max="500" value="5">
-      <span style="color:#475569">від 1 до 500</span>
+      <span style="color:#475569">from 1 to 500</span>
     </div>
     <input type="range" class="slider" id="slider" min="1" max="150" value="5">
   </div>
 
   <div class="cards">
     <div class="card card-sl">
-      <div class="badge">Наш сервіс</div>
+      <div class="badge">Our service</div>
       <div class="name name-sl">SparkLead</div>
       <div class="price price-sl mono" id="slPrice">$245.00</div>
-      <div class="sub" id="slPer">$49.00 / профіль</div>
+      <div class="sub" id="slPer">$49.00 / profile</div>
     </div>
     <div class="card card-hr">
       <div class="name name-hr">HeyReach</div>
       <div class="price price-hr mono" id="hrPrice">$395.00</div>
-      <div class="sub" id="hrPer">$79.00 / профіль</div>
+      <div class="sub" id="hrPer">$79.00 / profile</div>
     </div>
   </div>
 
   <div class="savings">
     <div>
-      <div class="sav-label">Ваша економія зі SparkLead</div>
+      <div class="sav-label">Your savings with SparkLead</div>
       <div class="sav-amount" id="savAmount">$150.00</div>
     </div>
     <div class="disc-box">
       <div class="disc-val" id="discVal">37.9%</div>
-      <div class="disc-lbl">дешевше</div>
+      <div class="disc-lbl">cheaper</div>
     </div>
   </div>
 
@@ -203,9 +204,9 @@ function update(){
   const d=interp(selected);
   if(!d)return;
   document.getElementById('slPrice').textContent='$'+fmt(d.st);
-  document.getElementById('slPer').textContent='$'+fmt(d.sp)+' / профіль';
+  document.getElementById('slPer').textContent='$'+fmt(d.sp)+' / profile';
   document.getElementById('hrPrice').textContent='$'+fmt(d.ht);
-  document.getElementById('hrPer').textContent='$'+fmt(d.hp)+' / профіль';
+  document.getElementById('hrPer').textContent='$'+fmt(d.hp)+' / profile';
   document.getElementById('savAmount').textContent='$'+fmt(d.ht-d.st);
   document.getElementById('discVal').textContent=d.d.toFixed(1)+'%';
   buildPills();
